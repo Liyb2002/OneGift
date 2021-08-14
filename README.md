@@ -1,8 +1,6 @@
 # OneGift
 
-In-depth documentation on Uniswap V2 is available at [uniswap.org](https://uniswap.org/docs).
 
-The built contract artifacts can be browsed via [unpkg.com](https://unpkg.com/browse/@uniswap/v2-core@latest/).
 
 # Local Development
 
