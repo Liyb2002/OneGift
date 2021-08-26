@@ -14,8 +14,13 @@ contract statking{
     TokenPool public lockedPool;
     TokenPool public unlockedPool;
     mapping (address => UserDetail) UserInfo;
-    uint256 private totalTimeAmount;
-    uint256 private lastTimeStamp;
+    uint256 private _totalTimeAmount=0;
+    uint256 private _lastTimeStamp=0;
+
+    //When to stop producing new tokens
+    uint256 private _Initime;
+    uint256 private _duration = 60 days;
+    uint256 private _distributionAmount;
 
 
     struct UserDetail{
@@ -26,12 +31,14 @@ contract statking{
     
     uint256 public totalStakedAmount;
 
-    constructor (IERC20 stakingToken, IERC20 MinningToken) public{
+    constructor (IERC20 stakingToken, IERC20 MinningToken, 
+        uint256 distributionAmount) public{
         stakingPool = new TokenPool(stakingToken);
         lockedPool=new TokenPool(MinningToken);
         unlockedPool=new TokenPool(MinningToken);
-        totalStakedAmount=0;
-        totalTimeAmount=0;
+        _Initime=now;
+        _distributionAmount=distributionAmount;
+
     }
     
     function totalStaked() public view returns(uint256){
@@ -69,8 +76,8 @@ contract statking{
     }
 
     function _updateTotalTimeAmount(uint256 amount, bool isAdd)private{
-        totalTimeAmount= totalTimeAmount.add((now.sub(lastTimeStamp)).mul(totalStakedAmount));
-        lastTimeStamp=now;
+        _totalTimeAmount= _totalTimeAmount.add((now.sub(_lastTimeStamp)).mul(totalStakedAmount));
+        _lastTimeStamp=now;
         if(isAdd){
          totalStakedAmount = totalStakedAmount.add(amount);
         }
@@ -78,6 +85,12 @@ contract statking{
          totalStakedAmount = totalStakedAmount.sub(amount);
 
         }
+
+    }
+
+    function _rewardsCalculation (address user)view private returns(uint256){
+        uint256 _totalAvalAmount = (now.sub(_Initime)).div(_duration).mul(_distributionAmount);
+        return (UserInfo[user].UsertimeAmount).div(totalStakedAmount).mul(_totalAvalAmount);
 
     }
 
