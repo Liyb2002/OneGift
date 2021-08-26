@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0
+
 pragma solidity 0.6.10 ;
 
 
 contract IDRegistration{
     mapping (string => address) Registrar;
-    address owner;
+    address payable owner;
 
 
     constructor( ) public{
